@@ -5,12 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class HighscoreDatabase extends SQLiteOpenHelper {
 
+    // Create variable
     private static HighscoreDatabase highscoreDatabase;
 
+    // Create constructor
     public HighscoreDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -40,7 +41,7 @@ public class HighscoreDatabase extends SQLiteOpenHelper {
 
     public Cursor selectAll() {
 
-        // Create Cursor
+        // Create Cursor from all the data in the database
         Cursor cursor = getWritableDatabase().rawQuery("SELECT * FROM highscore_table ORDER BY score DESC", null);
         return cursor;
     }
@@ -59,6 +60,7 @@ public class HighscoreDatabase extends SQLiteOpenHelper {
         db.insert("highscore_table", null, contentValues);
     }
 
+    // This method removes all data from the table
     public void delete() {
         getWritableDatabase().delete("highscore_table","1", null);
     }

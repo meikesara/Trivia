@@ -1,27 +1,21 @@
 package com.example.trivia;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Handler;
 
 public class GameActivity extends AppCompatActivity implements TriviaRequest.Callback {
 
+    // Initialise variables
     int questionCount = 1;
     ArrayList<QuestionItem> question = new ArrayList<>();
     QuestionItem currentQuestion;
@@ -33,12 +27,15 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        // Get the intent and the username
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         TextView number = findViewById(R.id.question);
 
+        // Set the number of the question
         number.setText("Question " + questionCount + ":");
 
+        // Load in the trivia questions
         TriviaRequest x =  new TriviaRequest(this);
         x.getQuestion(this);
     }
@@ -64,10 +61,12 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
     public void onAnswer(View view) {
         Button button = (Button) view;
 
+        // check if the answer was correct and add 1 to the counter
         if (correctAnswer(button.getText().toString())) {
             correctCounter += 1;
         }
 
+        // Check if the game is over
         if (!gameOver()) {
 
             // Count the questions
@@ -76,13 +75,19 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
             // Display question
             displayQuestion(question);
         }
+        // Go to the Highscore activity if the game is over
         else {
+            // Create Highscore Item
             HighscoreItem highscore = new HighscoreItem(username, correctCounter);
-            HighscoreDatabase db = HighscoreDatabase.getInstance(this);
 
+            // Save the highscoreItem into the HighscoreDatabase
+            HighscoreDatabase db = HighscoreDatabase.getInstance(this);
             db.insert(highscore);
+
+            // Update the database
             db.selectAll();
 
+            // Create the intent and put in the username
             Intent intent = new Intent(GameActivity.this, HighScoreActivity.class);
             intent.putExtra("username", username);
             startActivity(intent);
@@ -90,22 +95,17 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         }
     }
 
+    //This method checks whether the given answer is correct
     public boolean correctAnswer(String answer) {
-        if (answer.equals(currentQuestion.getCorrect_answer())) {
-            return true;
-        } else {
-            return false;
-        }
+        return (answer.equals(currentQuestion.getCorrect_answer()));
     }
 
+    // This method checks if the game is over
     public boolean gameOver() {
-        if (questionCount >= 10) {
-            return true;
-        } else {
-            return false;
-        }
+        return (questionCount >= 10);
     }
 
+    // This method handles the displaying of questions
     public void displayQuestion(ArrayList<QuestionItem> question) {
 
         // Choose random QuestionItem
@@ -116,6 +116,7 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         // Remove questionItem from the Arraylist
         question.remove(questionNum);
 
+        // Initialiase variables
         TextView questionText = findViewById(R.id.question_current);
         Button answer1 = findViewById(R.id.answer1);
         Button answer2 = findViewById(R.id.answer2);
@@ -123,21 +124,28 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         Button answer4 = findViewById(R.id.answer4);
         TextView number = findViewById(R.id.question);
 
+        // Set the question and the number of the question
         questionText.setText(Html.fromHtml(currentQuestion.getQuestion(), Html.FROM_HTML_MODE_LEGACY));
         number.setText("Question " + questionCount + ":");
 
+        // inititaliase the max and min
         int max = 3;
         int min = 0;
 
+        // Get a random integer from 0 to 3
         int value = rand.nextInt((max - min) + 1) + min;
+
+        // Create a list of places
         List<Integer> places = new ArrayList<>();
         places.add(1);
         places.add(2);
         places.add(3);
         places.add(4);
 
+        // Create a string with the correct answer
         String correct_answer = Html.fromHtml(currentQuestion.getCorrect_answer(),Html.FROM_HTML_MODE_LEGACY).toString();
 
+        // Randomly put the correct answer in one of the four buttons
         if (places.get(value) == 1) {
             answer1.setText(correct_answer);
         } else if (places.get(value) == 2) {
@@ -148,14 +156,20 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
             answer4.setText(correct_answer);
         }
 
+        // Update the available places and max
         places.remove(places.get(value));
         max = max - 1;
 
+
         for (int j = 0; j < 3; j++) {
 
+            // Get a random integer from min to max
             value = rand.nextInt((max - min) + 1) + min;
+
+            // Create variable with the current incorrect answer
             String incorrect_answer = Html.fromHtml(currentQuestion.getIncorrect_answers().get(j), Html.FROM_HTML_MODE_LEGACY).toString();
 
+            // Randomly put the answer on one of the still available places
             if (places.get(value) == 1) {
                 answer1.setText(incorrect_answer);
             } else if (places.get(value) == 2) {
@@ -166,8 +180,8 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
                 answer4.setText(incorrect_answer);
             }
 
+            // Update places and max
             places.remove(places.indexOf(places.get(value)));
-
             max = max - 1;
         }
     }
