@@ -38,6 +38,7 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         // Load in the trivia questions
         TriviaRequest x =  new TriviaRequest(this);
         x.getQuestion(this);
+
     }
 
     @Override
@@ -100,6 +101,7 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         return (answer.equals(currentQuestion.getCorrect_answer()));
     }
 
+
     // This method checks if the game is over
     public boolean gameOver() {
         return (questionCount >= 10);
@@ -107,6 +109,12 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
 
     // This method handles the displaying of questions
     public void displayQuestion(ArrayList<QuestionItem> question) {
+
+        TextView questionText;
+        Button answer1;
+        Button answer2;
+        Button answer3;
+        Button answer4;
 
         // Choose random QuestionItem
         Random rand = new Random();
@@ -117,11 +125,11 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         question.remove(questionNum);
 
         // Initialiase variables
-        TextView questionText = findViewById(R.id.question_current);
-        Button answer1 = findViewById(R.id.answer1);
-        Button answer2 = findViewById(R.id.answer2);
-        Button answer3 = findViewById(R.id.answer3);
-        Button answer4 = findViewById(R.id.answer4);
+        questionText = findViewById(R.id.question_current);
+        answer1 = findViewById(R.id.answer1);
+        answer2 = findViewById(R.id.answer2);
+        answer3 = findViewById(R.id.answer3);
+        answer4 = findViewById(R.id.answer4);
         TextView number = findViewById(R.id.question);
 
         // Set the question and the number of the question

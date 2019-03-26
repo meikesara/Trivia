@@ -2,9 +2,10 @@ package com.example.trivia;
 
 import org.json.JSONArray;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class QuestionItem {
+public class QuestionItem implements Serializable {
     String question;
     String correct_answer;
     ArrayList<String> incorrect_answers;
